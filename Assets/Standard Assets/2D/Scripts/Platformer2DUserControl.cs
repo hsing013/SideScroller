@@ -10,33 +10,54 @@ namespace UnityStandardAssets._2D
         private PlatformerCharacter2D m_Character;
         private bool m_Jump;
 
-
+        public Transform attackPos;
+        public LayerMask mask;
+        public float attackRange;
+        private int attackCooldown = 0;
         private void Awake()
         {
             m_Character = GetComponent<PlatformerCharacter2D>();
+            //healthBar = GameObject.Find("HealthBar");
+            //health = 100;
         }
 
 
         private void Update()
         {
-            Debug.Log("Update of platform is called\n");
+            //Debug.Log("Update of platform is called\n");
             if (!m_Jump)
             {
                 // Read the jump input in Update so button presses aren't missed.
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
+
         }
 
 
         private void FixedUpdate()
         {
-            Debug.Log("Fixed update of platform 2d is called\n");
+            //Debug.Log("Fixed update of platform 2d is called\n");
             // Read the inputs.
+            if (attackCooldown <=0 && Input.GetKey(KeyCode.Q))
+            {
+                Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, mask);
+                for (int i = 0; i < enemiesToDamage.Length; ++i)
+                {
+                    enemiesToDamage[i].GetComponent<EnemyHealth>().takeDamage(10);
+                }
+                attackCooldown = 10;
+            }
+            else
+            {
+                attackCooldown -= 1;
+            }
             bool crouch = Input.GetKey(KeyCode.LeftControl);
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
             // Pass all parameters to the character control script.
             m_Character.Move(h, crouch, m_Jump);
             m_Jump = false;
         }
+
+
     }
 }

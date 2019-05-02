@@ -7,6 +7,8 @@ public class EnemySpawnerScript : MonoBehaviour
     // Start is called before the first frame update
 
     public GameObject enemy;
+    bool spawned = false;
+    public int amountToSpawn;
     void Start()
     {
         
@@ -15,7 +17,25 @@ public class EnemySpawnerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Instantiate(enemy, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+
         
+    }
+
+    void spawnEnemy()
+    {
+        if (!spawned)
+        {
+            for (int i = 0; i < amountToSpawn; ++i)
+            {
+                Instantiate(enemy, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            }
+            spawned = true;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Hello world");
+        spawnEnemy();
     }
 }
